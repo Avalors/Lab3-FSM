@@ -2,6 +2,9 @@ module f1_fsm (
     input   logic       rst,
     input   logic       en,
     input   logic       clk,
+    input   logic       trigger,
+    output  logic       cmd_seq,
+    output  logic       cmd_delay,
     output  logic [7:0] data_out
 );
 
@@ -13,9 +16,7 @@ module f1_fsm (
     //intantiates state change
     always_ff @(posedge clk, posedge rst)
         if(rst) current_state <= S0;
-        else if(en) current_state <= next_state;
-
-
+        else if(en & trigger) current_state <= next_state;
 
     //sets next_state logic
     always_comb
@@ -45,4 +46,34 @@ module f1_fsm (
             S8: data_out = 8'b11111111;
             default data_out = 8'b0;
         endcase
+
+    always_comb
+        case(current_state)
+            S0: cmd_seq = 1'b0;
+            S1: cmd_seq = 1'b1;
+            S2: cmd_seq = 1'b1;
+            S3: cmd_seq = 1'b1;
+            S4: cmd_seq = 1'b1;
+            S5: cmd_seq = 1'b1;
+            S6: cmd_seq = 1'b1;
+            S7: cmd_seq = 1'b1;
+            S8: cmd_seq = 1'b1;
+            default cmd_seq = 1'b0;
+        endcase
+
+        
+    always_comb
+        case(current_state)
+            S0: cmd_delay= 1'b1;
+            S1: cmd_delay = 1'b0;
+            S2: cmd_delay = 1'b0;
+            S3: cmd_delay = 1'b0;
+            S4: cmd_delay = 1'b0;
+            S5: cmd_delay = 1'b0;
+            S6: cmd_delay = 1'b0;
+            S7: cmd_delay = 1'b0;
+            S8: cmd_delay = 1'b0;
+            default cmd_seq = 1'b0;
+        endcase
+
 endmodule
